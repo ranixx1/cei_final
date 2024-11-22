@@ -1,4 +1,5 @@
 {% extends 'baselog.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Cadastre-se - CEI{% endblock %}
 {% block content %}
 
@@ -10,9 +11,9 @@
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ next }}">
-                    
-                    {{ form.as_p}}
-                    
+
+                    {{ form|crispy }}
+
                     <button type="submit" class="btn btn-primary btn-block">Entrar</button>
                 </form>
             </div>
