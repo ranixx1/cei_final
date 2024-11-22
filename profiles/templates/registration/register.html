@@ -1,0 +1,23 @@
+{% extends 'baselog.html' %}
+{% block title %}Cadastre-se - CEI{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4 text-center">
+        <div class="card auth-card">
+            <div class="card-body">
+                <h4 class="card-title text-center">Cadastrar no CEI</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    
+                    {{ form.as_p}}
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
