@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}home{% endblock %}
+{% block content %}
+<style>
+    #calendar-container {
+        display: flex;
+        justify-content: center;
+        height: 100%;
+    }
+
+    #calendar {
+        max-width: 1000px;
+        max-height: 100%;
+        width: 100%;
+        overflow-y: auto;
+    }
+</style>
+
+<div id="calendar-container">
+    <div id="calendar"></div>
+</div>
+
+<script src="{% static 'fullcalendar/dist/index.global.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/api/tasks/',  // Esta URL deve retornar os eventos do seu backend Django
+            eventClick: function (info) {
+                var taskId = info.event.id;  // Supondo que você esteja passando a ID do evento no campo `id` da resposta JSON
+                var taskUrl = '/task/' + taskId;  // Cria a URL para redirecionar
+
+                // Redireciona para a página de detalhes da tarefa
+                window.location.href = taskUrl;
+            },
+            displayEventTime: true,
+        });
+        calendar.render();
+    });
+</script>
+
+{% endblock %}

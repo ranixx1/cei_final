@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Tarefas{% endblock %}
+
+{% block content %}
+
+<div class="offset-1 col-10 list-div">
+    <h1>Lista de Eventos</h1>
+    <div class="row mb-3">
+
+        <!-- Botão de adicionar tarefa -->
+        <div class="col-auto btn-primary">
+            <a id="add-link" href="{% url 'new-task' %}" class="btn btn-primary d-flex align-items-center">
+                <i class="fas fa-plus me-2"></i> Adicionar tarefa
+            </a>
+        </div>
+
+        <!-- Campo de busca -->
+        <div class="col">
+            <div class="input-group">
+                <input class="form-control" type="text" id="search" name="search"
+                    placeholder="Digite o nome da tarefa para buscar...">
+                <span><i class="fas fa-search"></i></span>
+            </div>
+        </div>
+    </div>
+    {% if messages %}
+    <ul class="messages list-unstyled">
+        {% for message in messages %}
+        <li{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+    <ul class="task-list list-unstyled">
+        {% for task in tasks %}
+        <li class="task-item">
+            <div class="container text-left">
+                <div class="row">
+                    <div class="col">
+                        <span><a href="/task/{{ task.id }}" class="text-decoration-none">{{ task.title }}</a></span>
+                    </div>
+                    <div class="col">
+                        <span style="color: #a5a5a5;">{{ task.start_date }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{% url 'delete-task' task.id %}" class="text-danger me-2"><i
+                                class="fas fa-trash"></i></a>
+                        <a href="{% url 'edit-task' task.id %}" class="text-warning"><i class="fas fa-edit"></i></a>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
