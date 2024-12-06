@@ -30,11 +30,11 @@ class UsuarioForm(UserCreationForm):
         new_turma = form.cleaned_data['turma'] 
 
         if old_turma != new_turma:
-            if old_turma and Group.objects.filter(name=old_turma.name).exists():
+            if old_turma and Group.objects.filter(name=old_turma.name).exist():
                 old_group = Group.objects.get(name=old_turma.name)
                 user.groups.remove(old_group)
 
-            if new_turma and Group.objects.filter(name=new_turma.name).exists():
+            if new_turma and Group.objects.filter(name=new_turma.name).exist():
                 new_group = Group.objects.get(name=new_turma.name)
                 user.groups.add(new_group)
 
