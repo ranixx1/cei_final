@@ -1,5 +1,6 @@
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.models import Group
+from .models import CustomUser
 from django.urls import reverse_lazy
 from .forms import UsuarioForm
 from django.shortcuts import get_object_or_404
@@ -26,3 +27,10 @@ class CreateUser(CreateView):
         context['titulo'] = "Registro de novo usuário"
         context['botão'] = "Cadastrar"
         return context
+
+
+    class UserUpdate(UpdateView):
+        template_name = "registration/edituser.html"
+        model = CustomUser
+        fields = ['username', 'email', 'turma']
+        success_url = reverse_lazy("dashboard")
