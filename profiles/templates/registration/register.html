@@ -3,18 +3,22 @@
 {% block title %}Cadastre-se - CEI{% endblock %}
 {% block content %}
 
-<div class="row">
-    <div class="col-md-4 offset-md-4 text-center">
-        <div class="card auth-card">
-            <div class="card-body">
-                <h4 class="card-title text-center">Cadastrar no CEI</h4>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 rounded-lg">
+            <div class="card-header text-center" style="border: none; background-color: #ffffff;">
+                <h4 class="h3 mb-3 fw-normal">Cadastrar no CEI</h4>
+            </div>
+            <div class="card-body p-4">
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ next }}">
 
                     {{ form|crispy }}
 
-                    <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+                    </div>
                 </form>
             </div>
         </div>

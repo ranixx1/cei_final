@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 bg-light p-4 rounded shadow-sm position-relative">
+            <a href="{% url 'turma_members' user_detail.turma.id %}"
+                class="btn btn-secondary position-absolute top-0 start-0 mt-2 ms-2">
+                Voltar
+            </a>
+
+            <h1 class="display-6 text-center mb-3">{{ user_detail.username }}</h1>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Nome de Usuário:</p>
+                <p class="text-muted mb-0">{{ user_detail.username }}</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Email:</p>
+                <p class="text-muted mb-0">{{ user_detail.email }}</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Cargo:</p>
+                <p class="text-muted mb-0">{{ user_detail.cargo }}</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Turma:</p>
+                <p class="text-muted mb-0">{{ user_detail.perfilturma }}</p>
+            </div>
+
+            <div class="mt-4">
+                <button type="button" class="btn {% if user_detail.cargo == " Aluno e Tutor" %}btn-danger{% else
+                    %}btn-success{% endif %}" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                    {% if user_detail.cargo == "Aluno e Tutor" %}
+                    Remover como Tutor
+                    {% elif user_detail.cargo == "Aluno" %}
+                    Tornar Tutor
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                Você tem certeza que deseja
+                {% if user_detail.cargo == "Aluno e Tutor" %}
+                remover o status de Tutor?
+                {% elif user_detail.cargo == "Aluno" %}
+                tornar este usuário um Tutor?
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" name="toggle_tutor" class="btn {% if user_detail.cargo == " Aluno e Tutor"
+                        %}btn-danger{% else %}btn-success{% endif %}">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

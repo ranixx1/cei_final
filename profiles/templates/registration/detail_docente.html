@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 bg-light p-4 rounded shadow-sm position-relative">
+            <a href="javascript:history.back()" class="btn btn-secondary position-absolute top-0 start-0 mt-2 ms-2">
+                Voltar
+            </a>
+            <h1 class="display-6 text-center mb-3">{{ docente.username }}</h1>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Nome de Usuário:</p>
+                <p class="text-muted mb-0">{{ docente.username }}</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Email:</p>
+                <p class="text-muted mb-0">{{ docente.email }}</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold mb-1">Cargo:</p>
+                <p class="text-muted mb-0">{{ docente.cargo }}</p>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <!-- Botão de Editar -->
+                <a href="{% url 'edit_professor' docente.id %}" class="btn btn-primary">
+                    Editar Professor
+                </a>
+
+                <!-- Botão de Remover -->
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                    Remover Professor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja remover este professor?
+                Se essa ação for concluída, todos os eventos que ele cadastrou serão removidos.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" name="remove_professor" class="btn btn-danger">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
