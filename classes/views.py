@@ -35,3 +35,13 @@ class TurmaCreateView(GroupRequiredMixin, LoginRequiredMixin,  CreateView):
         Group.objects.get_or_create(name=group_name)
         
         return response
+
+class ListaTurmas(ListView):
+    model = Turma
+    template_name = 'classes/lista_turmas.html'
+    context_object_name = 'turmas'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_admin'] = self.request.user.groups.filter(name="Administrador").exists()
+        return context
