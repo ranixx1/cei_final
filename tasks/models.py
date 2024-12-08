@@ -1,18 +1,19 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+from profiles.models import CustomUser
 
 class Task(models.Model):
+    id = models.BigAutoField(primary_key=True)
 
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+    title = models.CharField(max_length=100)
+    description = models.TextField(max_length=500)
     start_date = models.DateField()
     end_date = models.DateField()
-    total_subs = models.PositiveIntegerField(default=0)
-    subs = models.PositiveIntegerField(default=0)
     start_time = models.TimeField()
     end_time = models.TimeField()
 
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    turma = models.ForeignKey('classes.Turma', on_delete=models.CASCADE,  related_name='task_set')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
