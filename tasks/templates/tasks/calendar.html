@@ -1,24 +1,85 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}home{% endblock %}
+{% block title %}Home{% endblock %}
+
 {% block content %}
 <style>
     #calendar-container {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        height: 100%;
+        gap: 20px;
     }
 
     #calendar {
-        max-width: 1000px;
-        max-height: 100%;
         width: 100%;
-        overflow-y: auto;
+        min-height: 400px;
+    }
+
+    @media (min-width: 992px) {
+        #calendar-container {
+            flex-wrap: nowrap;
+        }
+
+        #events-column {
+            max-width: 25%;
+        }
+
+        #calendar-column {
+            max-width: 75%;
+        }
+    }
+
+    .fc-header-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-start;
+    }
+
+    @media (max-width: 576px) {
+        .fc-header-toolbar {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fc-toolbar-chunk {
+            justify-content: flex-start;
+        }
     }
 </style>
 
-<div id="calendar-container">
-    <div id="calendar"></div>
+
+<div class="container-fluid mt-4 mb-5 vh-100">
+    <div class="row" id="calendar-container">
+        <div class="col-md-3 mb-3" id="events-column">
+            <h5>Eventos do dia:</h5>
+            {% for event in events_today %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text"><strong>Turma:</strong> {{ event.turma }}</p>
+                    <p class="card-text"><strong>dia:</strong> {{ event.start_date }} <br> <strong>até:</strong> {{
+                        event.end_date }} </p>
+                    <a href="/task/{{ event.id }}" class="btn btn-primary btn-sm">Ver Detalhes</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Não há eventos para hoje.</p>
+            {% endfor %}
+        </div>
+        <div class="col-md-9" id="calendar-column">
+            <div id="calendar"></div>
+        </div>
+    </div>
 </div>
 
 <script src="{% static 'fullcalendar/dist/index.global.js' %}"></script>
@@ -28,16 +89,29 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            events: '/api/tasks/',  // Esta URL deve retornar os eventos do seu backend Django
-            eventClick: function (info) {
-                var taskId = info.event.id;  // Supondo que você esteja passando a ID do evento no campo `id` da resposta JSON
-                var taskUrl = '/task/' + taskId;  // Cria a URL para redirecionar
-
-                // Redireciona para a página de detalhes da tarefa
-                window.location.href = taskUrl;
+            locale: 'pt-br',
+            buttonText: {
+                today: 'Hoje',
+                month: 'Mês',
+                week: 'Semana',
+                day: 'Dia',
+                list: 'Agenda'
             },
+            events: '/api/tasks/',
+            eventClick: function (info) {
+                var taskId = info.event.id;
+                window.location.href = '/task/' + taskId;
+            },
+            eventColor: '#0b57d0',
             displayEventTime: true,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            height: "100vh",
         });
+
         calendar.render();
     });
 </script>
