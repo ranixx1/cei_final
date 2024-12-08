@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Membros da Turma{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-3">Membros</h1>
+    <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item active"><a href="{% url 'lista-turmas' %}"
+                class="text-decoration-none text-dark">Turmas</a></li>
+        <li class="breadcrumb-item active">Membros - {{ turma.nome }}</li>
+    </ol>
+
+    {% if members %}
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user me-1"></i>
+            Membros
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="membersTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome de Usuário</th>
+                            <th>Email</th>
+                            <th>Cargo</th>
+                            {% if is_admin %}
+                            <th>Ações</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td>
+                                <a {% if is_servidor %} href="{% url 'user_detail' member.id %}" {% endif %}
+                                    class="text-decoration-none text-dark">
+                                    {{ member.username }}
+                                </a>
+                            </td>
+                            <td>{{ member.email }}</td>
+                            <td>
+                                {% if member.cargo == "Aluno e Tutor" %}
+                                <span class="badge text-bg-info">Aluno e Tutor</span>
+                                {% elif member.cargo == "Aluno" %}
+                                <span class="badge text-bg-secondary">Aluno</span>
+                                {% else %}
+                                <span class="badge text-bg-primary">{{ member.cargo }}</span>
+                                {% endif %}
+                            </td>
+                            {% if is_admin %}
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end">
+                                    <a href="{% url 'editar-usuario' member.id %}" class="text-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="text-danger me-2" data-bs-toggle="modal"
+                                        data-bs-target="#confirmRemoveModal" data-member-id="{{ member.id }}"
+                                        data-member-name="{{ member.username }}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        Não há membros cadastrados nesta turma.
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="confirmRemoveModal" tabindex="-1" aria-labelledby="confirmRemoveModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmRemoveModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir a conta de <strong id="memberName"></strong>? Esta ação é irreversível.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'excluir-conta' turma.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="memberIdInput">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link href="{% static 'css/style.min.css' %}" rel="stylesheet" />
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/simple-datatables.min.js' %}" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        const membersTable = document.getElementById('membersTable');
+        if (membersTable) {
+            const dataTable = new simpleDatatables.DataTable(membersTable, {
+                perPage: 5,
+                perPageSelect: [5, 10, 15, 20],
+                labels: {
+                    placeholder: "Buscar...",
+                    perPage: "Mostrar Registros",
+                    noRows: "Nenhum registro encontrado",
+                    info: "Mostrando {start} a {end} de {rows} registros",
+                    noResults: "Nenhum resultado correspondente",
+                    loading: "Carregando...",
+                    infoFiltered: " (filtrado de {rowsTotal} registros)",
+                    previous: "Anterior",
+                    next: "Próximo",
+                    first: "Primeiro",
+                    last: "Último",
+                }
+            });
+        }
+
+        const confirmRemoveModal = document.getElementById('confirmRemoveModal');
+        confirmRemoveModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            const memberId = button.getAttribute('data-member-id');
+            const memberName = button.getAttribute('data-member-name');
+
+            const memberIdInput = confirmRemoveModal.querySelector('#memberIdInput');
+            const memberNameText = confirmRemoveModal.querySelector('#memberName');
+
+            memberIdInput.value = memberId;
+            memberNameText.textContent = memberName;
+        });
+    });
+</script>
+{% endblock %}
