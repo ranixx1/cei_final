@@ -85,9 +85,12 @@ class TaskDeleteView(GroupRequiredMixin, LoginRequiredMixin, DeleteView):
             messages.error(request, "Você não tem permissão para excluir esta tarefa.")
             return redirect('task-list')
         return super().dispatch(request, *args, **kwargs)
+    
 
     def delete(self, request, *args, **kwargs):
+
         messages.success(request, 'Tarefa deletada com sucesso.')
+
         return super().delete(request, *args, **kwargs)
 
 
